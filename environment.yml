@@ -1,0 +1,29 @@
+name: cmabo-linux
+channels:
+  - gpytorch
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - gxx_linux-64
+  - gcc_linux-64
+  - swig
+  - pytorch==1.13.1
+  - torchvision==0.14.1
+  - torchaudio==0.13.1
+  - cpuonly
+  - gpytorch==1.8.1
+  - botorch==0.6.6
+  - pip:
+      - gpy
+      - cma
+      - gym
+      - gym[box2d]
+      - gym[mujoco]
+      - baxus
+      - ax-platform==0.2.6
+      - numpyro
+      - pandas==1.4.0
+
