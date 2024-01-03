@@ -36,7 +36,7 @@ We provide the settings for reproducing results presented in the paper ```experi
 
 # Acknowledgements
 
-This implementation uses materials from the following public repositories to implement the incorporate BO optimizers. We thank the respective repository maintainers.
+This implementation uses materials from the following public repositories to implement the CMA local regions and the incorporated BO optimizers. We thank the respective repository maintainers.
 1. CMA-ES: Hansen, N., & Ostermeier, A. (2001). Completely derandomized self-adaptation in evolution strategies. Evolutionary computation, 9(2), 159-195.
    Code repo: https://github.com/CMA-ES/pycma
 2. TuRBO: Eriksson, D., Pearce, M., Gardner, J. R., Turner, R., & Poloczek, M. (2019). Scalable global optimization via local Bayesian optimization. Advances in Neural Information Processing Systems, 32 (NeurIPS).
