@@ -37,8 +37,10 @@ We provide the settings for reproducing results presented in the paper ```experi
 # Acknowledgements
 
 This implementation uses materials from the following public repositories to implement the incorporate BO optimizers. We thank the respective repository maintainers.
-1. TuRBO: Eriksson, D., Pearce, M., Gardner, J. R., Turner, R., & Poloczek, M. (2019). Scalable global optimization via local Bayesian optimization. Advances in Neural Information Processing Systems, 32 (NeurIPS).
+1. CMA-ES: Hansen, N., & Ostermeier, A. (2001). Completely derandomized self-adaptation in evolution strategies. Evolutionary computation, 9(2), 159-195.
+   Code repo: https://github.com/CMA-ES/pycma
+2. TuRBO: Eriksson, D., Pearce, M., Gardner, J. R., Turner, R., & Poloczek, M. (2019). Scalable global optimization via local Bayesian optimization. Advances in Neural Information Processing Systems, 32 (NeurIPS).
    Code repo: https://github.com/uber-research/TuRBO/
-2. BAxUS: Papenmeier, L., Nardi, L., & Poloczek, M. (2022). Increasing the scope as you learn: Adaptive Bayesian optimization in nested subspaces. Advances in Neural Information Processing Systems, 35, (NeurIPS).
+3. BAxUS: Papenmeier, L., Nardi, L., & Poloczek, M. (2022). Increasing the scope as you learn: Adaptive Bayesian optimization in nested subspaces. Advances in Neural Information Processing Systems, 35, (NeurIPS).
    Code repo: https://github.com/LeoIV/BAxUS
 
