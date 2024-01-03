@@ -22,8 +22,5 @@ dependencies:
       - gym
       - gym[box2d]
       - gym[mujoco]
-      - baxus
-      - ax-platform==0.2.6
-      - numpyro
       - pandas==1.4.0
 

@@ -28,7 +28,7 @@ except ImportError:
 import functools
 
 import numpy as np
-import seaborn as sns
+# import seaborn as sns
 
 
 def to_unit_cube(x: np.ndarray, lower_bounds: np.ndarray, upper_bounds: np.ndarray) -> np.ndarray:
@@ -156,22 +156,22 @@ def str2bool(value: str) -> bool:
         raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
-class ColorIterator(Iterator):
-    """
-    A color iterator
-    """
-    colors = sns.color_palette("husl", 23)
+# class ColorIterator(Iterator):
+#     """
+#     A color iterator
+#     """
+#     colors = sns.color_palette("husl", 23)
 
-    def __init__(self):
-        self.cc = 0
+#     def __init__(self):
+#         self.cc = 0
 
-    def __iter__(self):
-        return self
+#     def __iter__(self):
+#         return self
 
-    def __next__(self):
-        c = self.colors[self.cc % 23]
-        self.cc += 1
-        return c
+#     def __next__(self):
+#         c = self.colors[self.cc % 23]
+#         self.cc += 1
+#         return c
 
 
 def in_range(x: np.ndarray, incumbent: np.ndarray, lb: np.ndarray, ub: np.ndarray):

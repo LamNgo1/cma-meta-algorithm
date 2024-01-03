@@ -1,39 +1,32 @@
 # coding: utf-8
 import time
 
-import numpy as np
-
-from test_functions.utils import get_arguments, get_bound, set_seed
 from cmabo.cma_bo import CMABayesianOptimization
+from test_functions.utils import get_arguments, get_bound, set_seed
 
 # parameters
 input_dict = get_arguments()
-f = input_dict['f']
-MAX_EVALS = input_dict['max_evals']
+objective = input_dict['f']
+max_evals = input_dict['max_evals']
 solver = input_dict['solver']
 seed = input_dict['seed']
 
-print(f'CMA-{solver.upper()}: {f.name}-{f.input_dim}D function with max_evals={MAX_EVALS} and seed={seed}')
-
+information = f'CMA-{solver.upper()}: {objective.name}-{objective.input_dim}D function with max_evals={max_evals} and seed={seed}'
+print(information)
+print(f'==============> seed={seed} <===============')
+set_seed(seed=seed)
 # Start
-bounds = get_bound(f.bounds)
+bounds = get_bound(objective.bounds)
 lb = bounds[:, 0]
 ub = bounds[:, 1]
 
-history_fx = np.zeros((MAX_EVALS, 0))
-set_seed(seed=seed)
-print(f'==============> seed={seed} <===============')
 stamp1 = time.time()
-cmabo = CMABayesianOptimization(n_init=20, f=f.func, solver=solver, lb=lb, ub=ub,
-                                max_evals=MAX_EVALS, func_name=f.name, keep_record=True 
+cmabo = CMABayesianOptimization(n_init=20, f=objective.func, solver=solver, lb=lb, ub=ub,
+                                max_evals=max_evals, func_name=objective.name, keep_record=True 
                                 )
 cmabo.optimize()
 stamp2 = time.time()
-cmabo._dumpdata(seed, total_time=stamp2-stamp1)
-experiment = f'{f.name}_{f.input_dim}d'
-history_fx = np.hstack((history_fx, cmabo.observed_fx[:MAX_EVALS]))
-
-np.savetxt(f'cma-{solver}_{experiment}_{seed}.csv', history_fx, delimiter=',')
+cmabo.dumpdata(seed, total_time=stamp2-stamp1) # Save pickle file
 
 print('------> FINISHED <---------')
-print(f'CMA-{solver.upper()}: {f.name}-{f.input_dim}D function with max_evals={MAX_EVALS} and seed={seed}')
+print(information)

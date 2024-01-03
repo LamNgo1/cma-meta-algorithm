@@ -51,6 +51,9 @@ class CMABayesianOptimization:
         max_evals,              # maximum evaluation budget
         solver='baxus',         # 'bo', 'turbo' or 'baxus'
         n_init=20,
+        min_cuda=1024,
+        device="cpu",
+        dtype="float64",
         func_name='',           # function name (for logging output only)
         keep_record=False,      # whether to store pkl files 
     ):
@@ -74,6 +77,10 @@ class CMABayesianOptimization:
         self.solver = solver
         self.keep_record = keep_record
         self.func_name = func_name
+        # Device and dtype for GPyTorch
+        self.min_cuda = min_cuda
+        self.dtype = dtype
+        self.device = device
 
         # turbo properties
         self.turbo_prev_length = 0.8
@@ -274,7 +281,7 @@ class CMABayesianOptimization:
             else:
                 self.extra_data.append(deepcopy(extra_data))
     
-    def _dumpdata(self, seed=0, total_time=None):
+    def dumpdata(self, seed=0, total_time=None):
         if self.keep_record:
             results = dict()
             results['es_data'] = self.es_data
@@ -329,8 +336,18 @@ class CMABayesianOptimization:
             sigma = 1.0 if sigma < 1e-6 else sigma
             fx_gp_unit = (deepcopy(fx_gp) - mu) / sigma
             stamp2 = time.time()
+            # Figure out what device we are running on
+            if len(x_gp_unit) < self.min_cuda:
+                device, dtype = torch.device("cpu"), torch.float64
+            else:
+                dtype = torch.float32 if dtype == "float32" else torch.float64
+                device = torch.device("cuda") if device == "cuda" else torch.device("cpu")
+            
             with gpytorch.settings.max_cholesky_size(self.max_cholesky_size):
-                gp = train_gp(torch.tensor(x_gp_unit), torch.tensor(fx_gp_unit.flatten()), True, 50)
+                x_gp_torch = torch.tensor(x_gp_unit).to(device=device, dtype=dtype)
+                fx_gp_torch = torch.tensor(fx_gp_unit.flatten()).to(device=device, dtype=dtype)
+                gp = train_gp(x_gp_torch, fx_gp_torch, True, 50)
+            
             
             stamp3 = time.time()
 
@@ -342,11 +359,24 @@ class CMABayesianOptimization:
             
             x_cand = np.array([self.bound_tf.repair(x) for x in x_cand])
             x_cand = to_unit_cube(x_cand, self.lb, self.ub)
-            stamp4 = time.time()
+            stamp4 = time.time()   
+            # Figure out what device we are running on
+            if len(x_cand) < self.min_cuda:
+                device, dtype = torch.device("cpu"), torch.float64
+            else:         
+                dtype = torch.float32 if dtype == "float32" else torch.float64
+                device = torch.device("cuda") if device == "cuda" else torch.device("cpu")
+
+            # We may have to move the GP to a new device
+            gp = gp.to(dtype=dtype, device=device)
+
             # Start predicting with gpytorch
             with torch.no_grad(), gpytorch.settings.max_cholesky_size(self.max_cholesky_size):
-                x_torch = torch.tensor(x_cand).to(dtype=torch.float64)
-                y_cand = gp.likelihood(gp(x_torch)).sample(torch.Size([1])).t().numpy()
+                x_cand_torch = torch.tensor(x_cand).to(device=device, dtype=dtype)
+                y_cand = gp.likelihood(gp(x_cand_torch)).sample(torch.Size([1])).cpu().detach().t().numpy()
+            
+            # Remove the torch variables
+            del x_gp_torch, fx_gp_torch, x_cand_torch, gp
 
             # Update newly found min value to the training data
             x_min = from_unit_cube(x_cand[y_cand.argmin(axis=0), :], self.lb, self.ub)       
@@ -359,7 +389,6 @@ class CMABayesianOptimization:
             fx_gp = np.vstack((fx_gp, deepcopy(fx_min)))
             x_bo = np.vstack((x_bo, x_min))
             fx_bo = np.vstack((fx_bo, fx_min))
-            del gp, x_cand, y_cand
             stamp7 = time.time()
             bo_data.append({
                 'iter': n_eval+self.total_eval,
@@ -417,8 +446,8 @@ class CMABayesianOptimization:
                 max_cholesky_size=self.max_cholesky_size, # When we switch from Cholesky to Lanczos
                 n_training_steps=50,    # Number of steps of ADAM to learn the hypers
                 min_cuda=1024,          # Run on the CPU for small datasets
-                device="cpu",           # "cpu" or "cuda"
-                dtype="float64",        # float64 or float32
+                device=self.device,           # "cpu" or "cuda"
+                dtype=self.dtype,        # float64 or float32
                 n_eval_offset=self.total_eval,
                 cma_succcount=self.turbo_succcount,
                 cma_failcount=self.turbo_failcount,
@@ -522,6 +551,7 @@ class CMABayesianOptimization:
             target_dim=self.baxus_prev_target_dim,
             verbose=True,
             max_cholesky_size=self.max_cholesky_size,
+            dtype=self.dtype,
             offset=self.total_eval,
             behavior=behavior,
             create_cand_cma=create_candidates,

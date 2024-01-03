@@ -1,21 +1,18 @@
 import argparse
-import pickle
+import os
 import random
 from collections import OrderedDict
 
 import botorch
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.transforms as transforms
 import numpy as np
 import torch
-from matplotlib.patches import Ellipse
 
-from .function_realworld_bo.functions_realworld_bo import *
 from .function_realworld_bo.functions_mujoco import *
+from .function_realworld_bo.functions_realworld_bo import *
 from .functions_bo import *
 from .highdim_functions import *
 from .lasso_benchmark import *
+
 
 def get_arguments():
     parser = argparse.ArgumentParser(description='Process inputs')
@@ -145,6 +142,7 @@ def get_bound(bounds):
         return np.array(bounds)
     
 def set_seed(seed=1234):
+    os.environ["CUBLAS_WORKSPACE_CONFIG"]=":4096:8"
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
