@@ -4,7 +4,11 @@ Code for the CMA-Meta-Algorithm for Bayesian Optimization from ***High-dimension
 
 If you find our paper or this repo to be useful for your research, please consider citing:
 ```
-@article{
+@article{ngo2024high-dim,
+  title={High-dimensional Bayesian Optimization via Covariance Matrix Adaptation Strategy},
+  author={Ngo, Lam and Ha, Huong and Chan, Jeffrey and Nguyen, Vu and Zhang, Hongyu},
+  journal={Transactions on Machine Learning Research},
+  year={2024}
 }
 ```
 
