@@ -2,6 +2,8 @@
 
 Code for the CMA-Meta-Algorithm for Bayesian Optimization from ***High-dimensional Bayesian Optimization via Covariance Matrix Adaptation Strategy*** in the *Transactions on Machine Learning Research (TMLR)*. The OpenReview page can be found in this [link](https://openreview.net/forum?id=eTgxr7gPuU).
 
+![figure of cmabo](cmabo_general_process.png)
+
 If you find our paper or this repo to be useful for your research, please consider citing:
 ```
 @article{ngo2024cmabo,
