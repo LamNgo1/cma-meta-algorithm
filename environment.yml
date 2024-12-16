@@ -10,13 +10,12 @@ dependencies:
   - gxx_linux-64
   - gcc_linux-64
   - swig
-  - pytorch==1.13.1
-  - torchvision==0.14.1
-  - torchaudio==0.13.1
-  - cpuonly
-  - gpytorch==1.8.1
-  - botorch==0.6.6
   - pip:
+      - torch==1.13.1
+      - torchvision==0.14.1
+      - torchaudio==0.13.1
+      - gpytorch==1.8.1
+      - botorch==0.6.6
       - gpy
       - cma
       - gym
